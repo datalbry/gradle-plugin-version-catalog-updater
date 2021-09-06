@@ -2,8 +2,27 @@
 
 The `Gradle Catalog Updater` is a sophisticated gradle plugin, helping developers to update their gradle version catalogs.
 
+The plugin resolves the latest versions of each and every dependency by using the currently configured repositories. 
+
 ## Getting Started
 
+Setting up the plugin requires the following steps:
+
+1. Add the Plugin to your `build.gradle.kts`
+    ```kotlin
+    plugins {
+      id("io.datalbry.catalog.updater") version "<version>"
+    }
+    ``` 
+2. Configure the Plugin 
+    ```kotlin
+    catalogUpdate {
+      from = "./gradle/libs.versions.toml"
+      to = "./gradle/updatedLibs.versions.toml" 
+    }
+    ```
+
+> **NOTE:** The latest versions can be found [here](https://github.com/datalbry/gradle-version-catalog-updater/tags).  
 
 
 ## License
