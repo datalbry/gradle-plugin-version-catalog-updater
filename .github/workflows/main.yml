@@ -41,7 +41,7 @@ jobs:
 
   Release:
     runs-on: ubuntu-latest
-    if: ${{ github.ref == 'refs/heads/master' && github.event.inputs.version != '' }}
+    if: ${{ github.ref == 'refs/heads/main' && github.event.inputs.version != '' }}
     needs: Build
 
     steps:
