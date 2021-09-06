@@ -1,0 +1,39 @@
+name: Release Documentation
+
+on:
+  workflow_dispatch:
+
+jobs:
+  Build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+        name: Checkout
+
+      - uses: actions/setup-java@v1
+        name: Setup Java
+        with:
+          java-version: 11
+
+      - uses: eskatos/gradle-command-action@v1
+        name: Update Documentation
+        with:
+          arguments: prepareDocs
+
+      - name: Release Documentation
+        uses: datalbry/copy_folder_to_another_repo_action@1.0.0
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.CI_TOKEN }}
+        with:
+          source_folder: 'docs'
+          destination_repo: 'datalbry/docs'
+          destination_folder: 'docs/Integrations/Connector-SDK'
+          destination_branch: 'main'
+          user_email: ${{ secrets.CI_EMAIL }}
+          user_name: ${{ secrets.CI_USERNAME }}
+          commit_msg: '[CI:Connector-SDK] Release documentation'
+
+
+
+

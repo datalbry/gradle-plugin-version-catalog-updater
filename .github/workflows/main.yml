@@ -1,0 +1,139 @@
+name: CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version of the Release'
+        required: true
+
+jobs:
+  Build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+        name: Checkout
+
+      - uses: actions/setup-java@v1
+        name: Setup Java
+        with:
+          java-version: 11
+          
+      - uses: eskatos/gradle-command-action@v1
+        name: Fetch Dependencies
+        with:
+          arguments: dependencies
+          
+      - uses: eskatos/gradle-command-action@v1
+        name: Assemble
+        with:
+          arguments: assemble
+          
+      - uses: eskatos/gradle-command-action@v1
+        name: Tests
+        with:
+          arguments: test
+
+  Release-Snapshot:
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' && github.event.inputs.version == '' && github.event.inputs.version == '' }}
+    needs: build
+
+    steps:
+      - uses: actions/checkout@v2
+        name: Checkout
+
+      - uses: actions/setup-java@v1
+        name: Setup Java
+        with:
+          java-version: 11
+
+      - id: install-secret-key
+        name: Install GnuPG Key
+        run: |
+          cat <(echo -e "${{ secrets.GNUPG_SECRET_KEY }}") | gpg --batch --import
+          gpg --list-secret-keys --keyid-format LONG
+          
+      - uses: eskatos/gradle-command-action@v1
+        name: Release (Snapshot)
+        with:
+          arguments: >
+            publishMavenPublicationToSonatypeRepository
+            -Psnapshot=true
+            -PsonatypeUsername=${{ secrets.MAVENCENTRALUSERNAME }}
+            -PsonatypePassword=${{ secrets.MAVENCENTRALPASSWORD }}
+            -Psigning.gnupg.keyName=${{ secrets.GNUPG_SECRET_NAME }}
+            -Psigning.gnupg.passphrase=${{ secrets.GNUPG_SECRET_PASSWORD }}
+
+  Release:
+    runs-on: ubuntu-latest
+    if: ${{ github.ref == 'refs/heads/master' && github.event.inputs.version != '' }}
+    needs: Build
+
+    steps:
+      - uses: actions/checkout@v2
+        name: Checkout
+
+      - uses: actions/setup-java@v1
+        name: Setup Java
+        with:
+          java-version: 11
+
+      - id: install-secret-key
+        name: Install GnuPG Key
+        run: |
+          cat <(echo -e "${{ secrets.GNUPG_SECRET_KEY }}") | gpg --batch --import
+          gpg --list-secret-keys --keyid-format LONG
+
+      - uses: eskatos/gradle-command-action@v1
+        name: Set Release Version
+        with:
+          arguments: >
+            writeVersion
+            -PprojectVersion=${{ github.event.inputs.version }}
+
+      - uses: eskatos/gradle-command-action@v1
+        name: Release Artifact
+        with:
+          arguments: >
+            publishMavenPublicationToSonatypeRepository
+            closeAndReleaseSonatypeStagingRepository
+            -PprojectVersion=${{ github.event.inputs.version }}
+            -PsonatypeUsername=${{ secrets.MAVENCENTRALUSERNAME }}
+            -PsonatypePassword=${{ secrets.MAVENCENTRALPASSWORD }}
+            -Psigning.gnupg.keyName=${{ secrets.GNUPG_SECRET_NAME }}
+            -Psigning.gnupg.passphrase=${{ secrets.GNUPG_SECRET_PASSWORD }}
+
+      - uses: eskatos/gradle-command-action@v1
+        name: Update Documentation
+        with:
+          arguments: prepareDocs
+
+      - name: Release Documentation
+        uses: datalbry/copy_folder_to_another_repo_action@1.0.0
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.CI_TOKEN }}
+        with:
+          source_folder: 'docs'
+          destination_repo: 'datalbry/docs'
+          destination_folder: '/docs/integration/connector-sdk'
+          destination_branch: 'main'
+          user_email: ${{ secrets.CI_EMAIL }}
+          user_name: ${{ secrets.CI_USERNAME }}
+          commit_msg: '[CI:Connector-SDK] Release documentation v${{ github.event.inputs.version }}'
+
+      - uses: EndBug/add-and-commit@v7
+        name: Commit Version
+        with:
+          add: 'gradle.properties'
+          message: '[CI] Release Version ${{ github.event.inputs.version }}'
+          tag: 'v${{ github.event.inputs.version  }}'
+
+
+
+

@@ -1,0 +1,36 @@
+[versions]
+testcontainers = "1.15.1"
+precise = "0.0.7"
+commons-config = "0.0.1"
+alxndria-client = "0.0.3"
+alxndria-testcontainer = "1.0.0"
+kotlin = "1.4.21"
+junit = "5.7.0"
+
+[libraries]
+spring-web = { module = "org.springframework.boot:spring-boot-starter-web" }
+spring-data-jpa = { module = "org.springframework.boot:spring-boot-starter-data-jpa" }
+spring-actuator = { module = "org.springframework.boot:spring-boot-starter-actuator" }
+spring-amqp = { module = "org.springframework.boot:spring-boot-starter-amqp" }
+spring-test = { module = "org.springframework.boot:spring-boot-starter-test" }
+spring-autoconfigure = { module = "org.springframework.boot:spring-boot-autoconfigure" }
+jackson-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin" }
+postgres = { module = "org.postgresql:postgresql" }
+testcontainers-junit5  = { module = "org.testcontainers:junit-jupiter", version.ref = "testcontainers" }
+testcontainers-postgres = { module = "org.testcontainers:postgresql", version.ref = "testcontainers" }
+testcontainers-rabbitmq = { module = "org.testcontainers:rabbitmq", version.ref = "testcontainers" }
+testcontainers-core = { module = "org.testcontainers:testcontainers", version.ref = "testcontainers" }
+datalbry-alxndria-client = { module = "io.datalbry.alxndria:alxndria-client-feign", version.ref = "alxndria-client" }
+datalbry-alxndria-testcontainer = { module = "io.datalbry.testcontainers:testcontainers-alxndria", version.ref = "alxndria-testcontainer"}
+datalbry-precise-api = { module = "io.datalbry.precise:precise-api", version.ref = "precise" }
+datalbry-precise-core = { module = "io.datalbry.precise:precise-core", version.ref = "precise" }
+datalbry-commons-config-api = { module = "io.datalbry.commons:commons-config-api", version.ref = "commons-config" }
+kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
+kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
+junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
+junit-jupiter-core = { module = "org.junit.jupiter:junit-jupiter" }
+junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine" }
+
+[bundles]
+testcontainers = ["testcontainers-junit5", "testcontainers-postgres", "testcontainers-core"]
+testing = ["junit-jupiter-core", "testcontainers-junit5", "testcontainers-postgres", "testcontainers-core", "spring-test"]

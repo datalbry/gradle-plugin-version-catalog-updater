@@ -1,0 +1,93 @@
+# Concepts
+
+## Preamble
+This document is meant to describe the core-concepts of the Connector-SDK.
+It might be complicated by the first glimpse, but if you are familiar with graph-algorithms,
+it will be rather easy to understand.
+
+## Graph
+Most systems can easily be described with a graph of information,
+some nodes in the graph are simply there to point to other nodes,
+while other nodes are simply there to describe a specific resource.
+
+Is rather abstract in the very first moment, but gets clearer with an example.
+
+:::tip
+We want to integrate the data from Slack into the Knowledge Cloud.
+Therefore, we are analysing the information graph within Slack.
+
+There is an object called **Chat**, which is directly related to **n** different user.
+The chat also contains any arbitrary amount of messages.
+Each message can contain a limited amount of attachments.
+
+For our information graph we are following exactly the described path.
+First we have a node **Chat** with a unique identifier, linking to all **n** user plus all messages.
+While each and every message will also have a unique identifier plus a reference to its attachments.
+:::
+
+### Nodes
+
+Nodes are parts of the system, containing information of the system, such as:
+1. References (`Edges`) to other `Nodes`
+2. Information of `Document`s
+
+### Edges
+Edges are parts of the system, describing the information necessary to access another node of the source.
+In most parts its sufficient to describe the resource which should be accessed using the edge, as well as the identifier.
+
+For Atlassian Confluence a valid edge might contain the following information: `Type:Space`, `Id:DEV`.
+These two information are already sufficient to describe the `Space` named `Dev`.
+
+The information which have to be provided in edges heavily varies from system to system and from
+connector implementation to implementation.
+
+### Documents
+Documents are a specific type of Node containing information about a single entity in the source system.
+Each and every Document is described by at least it's primary key,
+which has to be unique for the whole source graph.
+Documents are described by metadata, plus their content.
+
+### Container
+Container are also a specific type of Node, but in contrast to Documents container only provide information of Edges
+Container are especially useful when there are Nodes without much metadata, and which might not be useful to integrate as a Document.
+
+## Modes
+
+The Connector-SDK currently supports a single mode: **Content Traversal**.
+There are more planned for the future.
+Such as **Principal Traversal**, which will traverse the security information of the system.
+
+### Content Traversal
+A content traversal is a simple traversal of the whole system,
+starting at the very root and traversing the whole graph.
+
+## Parallelization
+
+The Connector-SDK is able to parallelize the processing of nodes.
+While the integration cycle is being single threaded for each node,
+there might be multiple cycles running at a time,
+each on a different node of the source system.
+
+:::info
+To parallelize set the property *io.datalbry.connector.concurrency* to 2 or more.
+We highly recommend not using a value greater than 10.
+Negative values, as well as the value 0 are unsupported.
+:::
+
+## Integration Cycle
+
+The Connector-SDK itself is a state-ful application, requiring to persist the current structure of the knowledge graph.
+Whenever running a subsequent traversal, the Connector will continuously check for deleted nodes within the graph.
+Deleted nodes can simply be a Page which has been deleted within e.g. Atlassian Confluence,
+or sometimes a whole Space which will result into deleting all its documents.
+
+The integration cycle refers to a single node.
+The Connector-SDK parallelize running integration cycles on multiple nodes at once.
+
+The cycle runs the following steps
+
+1. Detection: Searching for references to new nodes
+2. Propagate References: Propagate the new references to the message broker
+3. Propagate Documents: Propagate the documents to the target system
+4. Calculate Deletions: Deletions are being calculated in simply running a diff between the current and last run of the specific node
+
