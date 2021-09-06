@@ -72,6 +72,8 @@ jobs:
         with:
           arguments: >
             publishPlugins
+            -Pgradle.publish.key=${{ secrets.GRADLE_PLUGIN_PORTAL_KEY }}
+            -Pgradle.publish.secret=${{ secrets.GRADLE_PLUGIN_PORTAL_SECRET }}
 
       - uses: EndBug/add-and-commit@v7
         name: Commit Version
