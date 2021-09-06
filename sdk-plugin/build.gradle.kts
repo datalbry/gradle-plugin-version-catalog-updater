@@ -1,6 +1,6 @@
 plugins {
     id("datalbry.kotlin")
-    id("datalbry.publication")
+    id("datalbry.plugin")
     id("java-gradle-plugin")
 }
 
@@ -28,6 +28,8 @@ gradlePlugin {
         create("plugin") {
             id = "io.datalbry.catalog.updater"
             implementationClass = "io.datalbry.plugin.catalog.updater.CatalogUpdaterPlugin"
+            displayName = "Version Catalog Updater"
+            description = "Simple plugin to update version catalogs using a Gradle task"
         }
     }
 }

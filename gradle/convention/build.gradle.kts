@@ -8,6 +8,7 @@ repositories {
 }
 
 dependencies {
+    implementation("com.gradle.publish:plugin-publish-plugin:0.15.0")
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin")
     implementation("org.springframework.boot:spring-boot-gradle-plugin:2.3.5.RELEASE")
     implementation("io.spring.gradle:dependency-management-plugin:1.0.9.RELEASE")
