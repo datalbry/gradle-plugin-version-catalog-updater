@@ -4,6 +4,9 @@ plugins {
     id("java-gradle-plugin")
 }
 
+val projectVersion: String by project
+version = projectVersion
+
 repositories {
     gradlePluginPortal()
     mavenCentral()
