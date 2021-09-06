@@ -11,23 +11,23 @@ repositories {
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib")
-
-    implementation("org.tomlj:tomlj:1.0.0")
-    implementation("com.github.ben-manes:gradle-versions-plugin:0.39.0")
+    implementation(libs.kotlin.gradle.plugin)
+    implementation(libs.kotlin.stdlib)
+    implementation(libs.org.tomlj)
+    implementation(libs.ben.manes.gradle.plugin)
 
     testImplementation(gradleTestKit())
     testImplementation(libs.junit.jupiter.api)
+
     testRuntime(libs.junit.jupiter.core)
     testRuntime(libs.junit.jupiter.engine)
 }
 
 gradlePlugin {
     plugins {
-        create("connector-sdk") {
+        create("plugin") {
             id = "io.datalbry.catalog.updater"
-            implementationClass = "io.datalbry.connector.plugin.CatalogUpdaterPlugin"
+            implementationClass = "io.datalbry.plugin.catalog.updater.CatalogUpdaterPlugin"
         }
     }
 }
