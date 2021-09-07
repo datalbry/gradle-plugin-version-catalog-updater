@@ -5,7 +5,7 @@ rootProject.name = "catalog-updater-plugin"
 includeBuild("gradle/convention")
 
 include(
-    "plugin",
+    "catalog-updater",
 )
 
 pluginManagement {
