@@ -34,8 +34,10 @@ gradlePlugin {
             implementationClass = "io.datalbry.plugin.catalog.updater.CatalogUpdaterPlugin"
             displayName = "Version Catalog Updater"
             description = "Simple plugin to update version catalogs using a Gradle task"
+
         }
     }
+
 }
 
 publishing {
