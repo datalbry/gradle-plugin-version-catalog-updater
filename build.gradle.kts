@@ -10,7 +10,7 @@ subprojects {
     }
 }
 
-group = "io.datalbry.connector"
+group = "io.datalbry.gradle"
 
 val values = tasks.create<Copy>("prepareDocs") {
     from("templates/docs")

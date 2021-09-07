@@ -35,5 +35,14 @@ fun Library.getGroup() =
 fun Library.getArtifactId() =
     module.split(":")[1]
 
-fun Set<Library>.containsModule(module: String) =
+fun Collection<Library>.containsModule(module: String) =
     any { it.module == module }
+
+fun Library.removeExplicitVersionIfNotPresentBefore(
+    catalog: Catalog,
+): Library {
+    val old = catalog.libraries.first { this.key == it.key && this.module == it.module }
+    return if (!old.hasVersion()) {
+        old.copy(version = null)
+    } else this
+}

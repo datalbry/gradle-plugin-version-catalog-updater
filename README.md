@@ -2,7 +2,9 @@
 
 The `Gradle Catalog Updater` is a sophisticated gradle plugin, helping developers to update their gradle version catalogs.
 
-The plugin resolves the latest versions of each and every dependency by using the currently configured repositories. 
+The plugin resolves the latest versions of each and every dependency by using the currently configured repositories.
+
+> **NOTE:** The Plugin only supports the external TOML format, which is being described [here](https://docs.gradle.org/current/userguide/platforms.html).
 
 ## Getting Started
 

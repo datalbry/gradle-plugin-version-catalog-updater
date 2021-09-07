@@ -2,6 +2,7 @@ plugins {
     id("datalbry.kotlin")
     id("datalbry.plugin")
     id("java-gradle-plugin")
+    id("maven-publish")
 }
 
 val projectVersion: String by project
@@ -34,6 +35,12 @@ gradlePlugin {
             displayName = "Version Catalog Updater"
             description = "Simple plugin to update version catalogs using a Gradle task"
         }
+    }
+}
+
+publishing {
+    repositories {
+        mavenLocal()
     }
 }
 

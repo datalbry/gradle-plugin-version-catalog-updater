@@ -21,19 +21,22 @@ class TomlCatalogWriter : CatalogWriter {
         stringBuilder.appendLine("[versions]")
         catalog.versions
             .sortedBy { it.key }
-            .onEach { stringBuilder.appendLine("${it.key} = \"${it.version}\"") }
+            .map { "${it.key} = \"${it.version}\"" }
+            .onEach { stringBuilder.appendLine(it) }
         stringBuilder.appendLine()
 
         stringBuilder.appendLine("[libraries]")
         catalog.libraries
             .sortedBy { it.key }
-            .onEach { stringBuilder.appendLine(it.toTomlString()) }
+            .map { it.toTomlString() }
+            .onEach { stringBuilder.appendLine(it) }
         stringBuilder.appendLine()
 
         stringBuilder.appendLine("[bundles]")
         catalog.bundles
             .sortedBy { it.key }
-            .onEach { stringBuilder.appendLine(it.toTomlString()) }
+            .map { it.toTomlString() }
+            .onEach { stringBuilder.appendLine(it) }
         stringBuilder.appendLine()
         file.writeText(stringBuilder.toString(), StandardCharsets.UTF_8)
     }
@@ -41,7 +44,7 @@ class TomlCatalogWriter : CatalogWriter {
 }
 
 private fun Bundle.toTomlString(): String {
-    val modules = this.modules.map { "\"$it\"" }.joinToString { "," }
+    val modules = this.modules.joinToString(",") { "\"$it\"" }
     return "$key = [$modules]"
 }
 

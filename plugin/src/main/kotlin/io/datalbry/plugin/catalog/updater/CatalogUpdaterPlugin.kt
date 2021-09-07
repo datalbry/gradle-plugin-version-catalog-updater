@@ -3,6 +3,7 @@ package io.datalbry.plugin.catalog.updater
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
+@Suppress("unused")
 class CatalogUpdaterPlugin: Plugin<Project> {
 
     override fun apply(project: Project) {

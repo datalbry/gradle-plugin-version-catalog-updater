@@ -10,6 +10,7 @@ import io.datalbry.plugin.catalog.updater.extensions.enrichVersion
 import io.datalbry.plugin.catalog.updater.extensions.hasVersion
 import io.datalbry.plugin.catalog.updater.extensions.hasVersionOrVersionRef
 import io.datalbry.plugin.catalog.updater.extensions.hasVersionRef
+import io.datalbry.plugin.catalog.updater.extensions.removeExplicitVersionIfNotPresentBefore
 import io.datalbry.plugin.catalog.updater.extensions.toVersion
 import io.datalbry.plugin.catalog.updater.model.Catalog
 import io.datalbry.plugin.catalog.updater.model.Library
@@ -43,14 +44,18 @@ class VersionsPluginBackedUpdatesChecker(
 
         val updatedVersions = calculateUpdatedVersions(catalog, latestVersions)
         val updatedLibraries = calculateUpdatedLibraries(catalog, latestVersions)
-        val unUpdatedVersions = catalog.versions.filter { updatedVersions.containsKey(it.key) }
-        val unUpdatedLibraries = catalog.libraries.filter { updatedLibraries.containsModule(it.module) }
+            .map { it.removeExplicitVersionIfNotPresentBefore(catalog) }
+            .toSet()
+        val unUpdatedVersions = catalog.versions.filter { !updatedVersions.containsKey(it.key) }
+        val unUpdatedLibraries = catalog.libraries.filter { !updatedLibraries.containsModule(it.module) }
 
         val versions = updatedVersions + unUpdatedVersions
         val libraries = updatedLibraries + unUpdatedLibraries
 
         return catalog.copy(versions = versions, libraries = libraries)
     }
+
+
 
     private fun calculateUpdatedLibraries(catalog: Catalog, latestVersions: List<Coordinate>): Set<Library> {
         return catalog.libraries
