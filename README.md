@@ -18,7 +18,7 @@ Setting up the plugin requires the following steps:
     ``` 
 2. Configure the Plugin 
     ```kotlin
-    catalogUpdate {
+    catalogUpdater {
       from = "./gradle/libs.versions.toml"
       to = "./gradle/updatedLibs.versions.toml" 
     }
