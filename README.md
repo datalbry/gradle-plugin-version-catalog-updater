@@ -26,6 +26,8 @@ Setting up the plugin requires the following steps:
 
 > **NOTE:** The latest versions can be found [here](https://github.com/datalbry/gradle-version-catalog-updater/tags).  
 
+> **NOTE:** Your version catalog requries the three tables `versions`, `libraries` and `bundles`.
+
 
 ## License
 >Copyright 2021 DataLbry Technologies UG
